@@ -1,0 +1,157 @@
+{
+    "version": 8,
+    "configurePresets": [
+        {
+            "name": "desktop_base",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "DEBUG": "1"
+            }
+        },
+        {
+            "name": "msvc_debug",
+            "inherits": "desktop_base",
+            "displayName": "Desktop (Debug) MSVC Windows",
+            "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)",
+            "generator": "Visual Studio 17 2022",
+            "toolset": "host=x64",
+            "architecture": "x64",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "CMAKE_BUILD_TYPE": "Debug"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "msvc_release",
+            "displayName": "Desktop (Release) MSVC Windows",
+            "inherits": "msvc_debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "clang_debug",
+            "inherits": "desktop_base",
+            "displayName": "Desktop (Debug) Clang",
+            "description": "Using compilers: clang++",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_C_COMPILER": "clang"
+            },
+            "condition": {
+                "type": "notEquals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "clang_release",
+            "inherits": "clang_debug",
+            "displayName": "Desktop (Release) Clang",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "clang_debug_win",
+            "inherits": "desktop_base",
+            "displayName": "Desktop (Debug) Clang",
+            "description": "Using compilers: clang++",
+            "generator": "MinGW Makefiles",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_C_COMPILER": "clang"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "clang_release_win",
+            "inherits": "clang_debug_win",
+            "displayName": "Desktop (Release) Clang",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "gcc_debug",
+            "inherits": "desktop_base",
+            "displayName": "Desktop (Debug) GCC",
+            "description": "Using compilers: gcc++",
+            "generator": "MinGW Makefiles",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "g++"
+            }
+        },
+        {
+            "name": "gcc_release",
+            "inherits": "gcc_debug",
+            "displayName": "Desktop (Release) GCC",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "msvc_debug",
+            "configurePreset": "msvc_debug",
+            "description": "Build the project using Visual Studio 17 2022 (x64 architecture) in Debug mode",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "msvc_release",
+            "configurePreset": "msvc_release",
+            "description": "Build the project using Visual Studio 17 2022 (x64 architecture) in Release mode",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "clang_debug",
+            "configurePreset": "clang_debug",
+            "description": "Build the project using clang++ in Debug mode"
+        },
+        {
+            "name": "clang_release",
+            "configurePreset": "clang_release",
+            "description": "Build the project using clang++ in Release mode"
+        },
+        {
+            "name": "clang_debug_win",
+            "configurePreset": "clang_debug_win",
+            "description": "Build the project using clang++ in Debug mode"
+        },
+        {
+            "name": "clang_release_win",
+            "configurePreset": "clang_release_win",
+            "description": "Build the project using clang++ in Release mode"
+        },
+        {
+            "name": "gcc_debug",
+            "configurePreset": "gcc_debug",
+            "description": "Build the project using gcc++ in Debug mode"
+        },
+        {
+            "name": "gcc_release",
+            "configurePreset": "gcc_release",
+            "description": "Build the project using gcc++ in Release mode"
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+---
+BasedOnStyle: WebKit
+IndentWidth: '4'
+UseTab: Never
+NamespaceIndentation: All
+BreakArrays: false
+SortIncludes: false
+BreakConstructorInitializers: BeforeComma
+AllowShortLoopsOnASingleLine: true
+AlwaysBreakAfterDefinitionReturnType: None
+AllowShortBlocksOnASingleLine: true
+AlignEscapedNewlines: DontAlign
+BinPackArguments: false
+BinPackParameters: false
+ExperimentalAutoDetectBinPacking: false
+AllowAllParametersOfDeclarationOnNextLine: false
+BreakBeforeBinaryOperators: false
+...
