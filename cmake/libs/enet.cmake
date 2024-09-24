@@ -1,12 +1,12 @@
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-set(local_lib_name "Libka")
-set(lib_name "LIBKA")
+set(local_lib_name "enet")
+set(lib_name "_enet")
 print("⚙️ Configuring ${local_lib_name}...")
 set(FETCHCONTENT_BASE_DIR "${DEPS_FOLDER}/${local_lib_name}")
 
 FetchContent_Declare(
     ${local_lib_name}
-    GIT_REPOSITORY "https://github.com/"
+    GIT_REPOSITORY "https://github.com/lsalzman/enet"
     GIT_TAG "master"
     GIT_PROGRESS TRUE
     OVERRIDE_FIND_PACKAGE TRUE
@@ -17,9 +17,10 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(${local_lib_name})
 
-target_include_directories(${CLIENT_TARGET_NAME} PRIVATE "${${local_lib_name}_BINARY_DIR}/include")
-# target_include_directories(${CLIENT_TARGET_NAME} PRIVATE "${${local_lib_name}_SOURCE_DIR}/include")
-target_link_libraries(${CLIENT_TARGET_NAME} PRIVATE ${lib_name})
+target_include_directories(${CLIENT_TARGET_NAME} PRIVATE "${${local_lib_name}_SOURCE_DIR}/include")
+target_link_libraries(${CLIENT_TARGET_NAME} PRIVATE ${local_lib_name})
+target_include_directories(${SERVER_TARGET_NAME} PRIVATE "${${local_lib_name}_SOURCE_DIR}/include")
+target_link_libraries(${SERVER_TARGET_NAME} PRIVATE ${local_lib_name})
 
 print("✅ Configuring ${local_lib_name} Done")
 # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛

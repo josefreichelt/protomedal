@@ -1,5 +1,0 @@
-CompileFlags:                     # Tweak the parse settings
-  Add: [-target,x86_64-pc-windows-gnu,-Wall, -Wextra, -pedantic, -std=c99]             # treat all files as C++, enable more warnings
-  Remove: -W*                     # strip all other warning-related flags
-  Compiler: gcc               # Change argv[0] of compile flags to `clang++`
-  CompilationDatabase: "build"

@@ -7,7 +7,7 @@ if [ $root_dir = "scripts" ]; then
 fi
 
 
-project_name_line=$(grep CMakeLists.txt -e "PROJECT_NAME\s\"")
+project_name_line=$(grep CMakeLists.txt -e "CLIENT_TARGET_NAME\s\"")
 project_name=$(cut -d "\"" -f 2 <<< $project_name_line)
 project_version_line=$(grep CMakeLists.txt -e "PROJECT_VERSION\s\"")
 project_version=$(cut -d "\"" -f 2 <<< $project_version_line)

@@ -21,25 +21,34 @@ include(cmake/utils/libloader.cmake)
 include(cmake/utils/printer.cmake)
 
 # Source and include files, hpp files put to sources for intellisense
-file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS SOURCES ${CMAKE_SOURCE_DIR}/source/*)
+file(GLOB_RECURSE CLIENT_SRC_FILES CONFIGURE_DEPENDS SOURCES ${CMAKE_SOURCE_DIR}/source/client/*)
 # Exlude test files from build:
-list(FILTER SRC_FILES EXCLUDE REGEX "\_test\.(c|h)$")
+list(FILTER CLIENT_SRC_FILES EXCLUDE REGEX "\_test\.(c|h)$")
 # Include only cpp and hpp files
-list(FILTER SRC_FILES INCLUDE REGEX "\.(c|h)$")
+list(FILTER CLIENT_SRC_FILES INCLUDE REGEX "\.(c|h)$")
+
+# Source and include files, hpp files put to sources for intellisense
+file(GLOB_RECURSE SERVER_SRC_FILES CONFIGURE_DEPENDS SOURCES ${CMAKE_SOURCE_DIR}/source/server/*)
+# Exlude test files from build:
+list(FILTER SERVER_SRC_FILES EXCLUDE REGEX "\_test\.(c|h)$")
+# Include only cpp and hpp files
+list(FILTER SERVER_SRC_FILES INCLUDE REGEX "\.(c|h)$")
+
 # Compile definitions
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_definitions(DEBUG)
 endif()
 
 print_block("Project settings"
-    PROJECT_NAME
+    CLIENT_TARGET_NAME
     CMAKE_RUNTIME_OUTPUT_DIRECTORY
     CMAKE_BUILD_TYPE
     CMAKE_C_COMPILER
     CMAKE_HOST_SYSTEM_NAME
     HOME
     )
-print_block("Source files" SRC_FILES)
+print_block("Client Source files" CLIENT_SRC_FILES)
+print_block("Server Source files" SERVER_SRC_FILES)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O2 -std=c99 -Wno-unused-function ")

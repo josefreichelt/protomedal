@@ -16,8 +16,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(${local_lib_name})
 
-target_include_directories(${PROJECT_NAME} PRIVATE "${${local_lib_name}_SOURCE_DIR}/include")
-# target_link_libraries(${PROJECT_NAME} PRIVATE ${lib_name})
+target_include_directories(${CLIENT_TARGET_NAME} PRIVATE "${${local_lib_name}_SOURCE_DIR}/include")
+# target_link_libraries(${CLIENT_TARGET_NAME} PRIVATE ${lib_name})
 
 print("✅ Configuring ${local_lib_name} Done")
 # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛

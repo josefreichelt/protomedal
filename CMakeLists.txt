@@ -10,9 +10,9 @@ set(CLIENT_TARGET_VERSION "0.1.0")
 set(CLIENT_TARGET_DESCRIPTION "A game client for erpege")
 
 
-set(CLIENT_SERVER_NAME "erpege_server")
-set(CLIENT_SERVER_VERSION "0.1.0")
-set(CLIENT_SERVER_DESCRIPTION "A game server for erpege")
+set(SERVER_TARGET_NAME "erpege_server")
+set(SERVER_TARGET_VERSION "0.1.0")
+set(SERVER_TARGET_DESCRIPTION "A game server for erpege")
 
 
 
@@ -20,12 +20,17 @@ set(CLIENT_SERVER_DESCRIPTION "A game server for erpege")
 include(cmake/init.cmake)
 
 project(
-    ${PROJECT_NAME}
+    ${CLIENT_TARGET_NAME}
     VERSION ${PROJECT_VERSION}
     DESCRIPTION ${PROJECT_DESCRIPTION}
     LANGUAGES C)
-
-add_executable(${PROJECT_NAME} ${SRC_FILES})
+project(
+    ${SERVER_TARGET_NAME}
+    VERSION ${PROJECT_VERSION}
+    DESCRIPTION ${PROJECT_DESCRIPTION}
+    LANGUAGES C)
+add_executable(${CLIENT_TARGET_NAME} ${CLIENT_SRC_FILES})
+add_executable(${SERVER_TARGET_NAME} ${SERVER_SRC_FILES})
 
 # Find and set third party libraries
 includelibs()
@@ -33,4 +38,4 @@ includelibs()
 # Find and copy assets
 include(cmake/assets.cmake)
 
-print_block("Configuration finished: ${PROJECT_NAME}")
+print_block("Configuration finished: ${CLIENT_TARGET_NAME}")
