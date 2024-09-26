@@ -1,6 +1,6 @@
 # Initialize some settings
 cmake_policy(SET CMP0048 NEW)
-set(CMAKE_C_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # For clangd LSP
 # Dirs
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
@@ -23,16 +23,16 @@ include(cmake/utils/printer.cmake)
 # Source and include files, hpp files put to sources for intellisense
 file(GLOB_RECURSE CLIENT_SRC_FILES CONFIGURE_DEPENDS SOURCES ${CMAKE_SOURCE_DIR}/source/client/*)
 # Exlude test files from build:
-list(FILTER CLIENT_SRC_FILES EXCLUDE REGEX "\_test\.(c|h)$")
+list(FILTER CLIENT_SRC_FILES EXCLUDE REGEX "\_test\.(cpp|hpp)$")
 # Include only cpp and hpp files
-list(FILTER CLIENT_SRC_FILES INCLUDE REGEX "\.(c|h)$")
+list(FILTER CLIENT_SRC_FILES INCLUDE REGEX "\.(cpp|hpp)$")
 
 # Source and include files, hpp files put to sources for intellisense
 file(GLOB_RECURSE SERVER_SRC_FILES CONFIGURE_DEPENDS SOURCES ${CMAKE_SOURCE_DIR}/source/server/*)
 # Exlude test files from build:
-list(FILTER SERVER_SRC_FILES EXCLUDE REGEX "\_test\.(c|h)$")
+list(FILTER SERVER_SRC_FILES EXCLUDE REGEX "\_test\.(cpp|hpp)$")
 # Include only cpp and hpp files
-list(FILTER SERVER_SRC_FILES INCLUDE REGEX "\.(c|h)$")
+list(FILTER SERVER_SRC_FILES INCLUDE REGEX "\.(cpp|hpp)$")
 
 # Compile definitions
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -51,10 +51,10 @@ print_block("Client Source files" CLIENT_SRC_FILES)
 print_block("Server Source files" SERVER_SRC_FILES)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O2 -std=c99 -Wno-unused-function ")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O2 -Wno-unused-function ")
 endif()
 
 # Hide console on windows release
 if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release" AND NOT EMSCRIPTEN)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,--subsystem,windows")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--subsystem,windows")
 endif()
