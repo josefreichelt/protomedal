@@ -17,7 +17,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(${local_lib_name})
 # disabling enum flag due to some raygui enums
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-enum-compare -Wno-ignored-qualifiers -Wno-incompatible-pointer-types-discards-qualifiers -Wno-unused-command-line-argument -Wno-unknown-warning-option -Wno-deprecated-declarations")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-enum-compare -Wno-ignored-qualifiers -Wno-incompatible-pointer-types-discards-qualifiers -Wno-unused-command-line-argument -Wno-unknown-warning-option -Wno-deprecated-declarations")
 
 target_include_directories(${CLIENT_TARGET_NAME} PRIVATE "${${local_lib_name}_BINARY_DIR}/raylib/include")
 

@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "network.hpp"
+#include "chat.hpp"
 
 static ENetHost* client;
 static ENetAddress address;
@@ -17,31 +18,15 @@ void NetworkInit()
         std::cout << "ENet initialized" << std::endl;
     }
 }
-void NetworkConnect()
+
+void NetworkCheckServer(int timeout)
 {
-    client = enet_host_create(NULL, 1, 2, 0, 0);
-    if (client == NULL) {
-        std::cerr << "An error occurred while creating Enet client." << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    enet_address_set_host(&address, "127.0.0.1");
-    address.port = 1337;
-
-    peer = enet_host_connect(client, &address, 2, 0);
-    if (peer == NULL) {
-        std::cerr << "No connection to the server" << std::endl;
+    if (client == nullptr)
         return;
-    }
-    if (enet_host_service(client, &event, 5000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
-        std::cout << "Connection to 127.0.0.1:1337 succeeded!" << std::endl;
-    } else {
-        enet_peer_reset(peer);
-        std::cout << "Connection to 127.0.0.1:1337 failed!" << std::endl;
-        return;
-    }
-
-    while (enet_host_service(client, &event, 1000) > 0) {
+    // static int pingCount = 0;
+    // std::cout << "Pinging" << pingCount++ << std::endl;
+    while (enet_host_service(client, &event, timeout) > 0) {
+        std::string msg;
         switch (event.type) {
         case ENET_EVENT_TYPE_CONNECT:
             std::cout << "A new client connected from " << event.peer->address.host << " : " << event.peer->address.port << std::endl;
@@ -52,23 +37,69 @@ void NetworkConnect()
             break;
 
         case ENET_EVENT_TYPE_RECEIVE:
-            std::cout << "A packet of length " << event.packet->dataLength << "containing" << event.packet->data << "was received from" << event.peer->address.host << ":" << event.peer->address.port << " %s:%s on channel " << event.channelID << std::endl;
+            std::cout << "Incoming packet, dataLength: "
+                      << event.packet->dataLength << " data: " << event.packet->data
+                      << " from: " << event.peer->address.host
+                      << ":" << event.peer->address.port << " on channel: "
+                      << event.channelID << std::endl;
 
+            msg = std::string { reinterpret_cast<char*>(event.packet->data), event.packet->dataLength };
+            if (msg.rfind("MSG", 0) == 0) {
+                ChatAddMessage(msg);
+            }
             /* Clean up the packet now that we're done using it. */
             enet_packet_destroy(event.packet);
 
             break;
 
         case ENET_EVENT_TYPE_DISCONNECT:
-            std::cout << "disconnected." << event.peer->data << std::endl;
+            std::cout << "disconnected." << event.peer->address.host << ":" << event.peer->address.port << std::endl;
 
             /* Reset the peer's client information. */
 
-            event.peer->data = NULL;
+            event.peer->data = nullptr;
         }
     }
 }
 
+void NetworkConnect()
+{
+    client = enet_host_create(nullptr, 1, 2, 0, 0);
+    if (client == nullptr) {
+        std::cerr << "An error occurred while creating Enet client." << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    enet_address_set_host(&address, "127.0.0.1");
+    address.port = 1337;
+
+    peer = enet_host_connect(client, &address, 2, 0);
+    if (peer == nullptr) {
+        std::cerr << "No connection to the server" << std::endl;
+        return;
+    }
+    if (enet_host_service(client, &event, 1000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
+        std::cout << "Connection to 127.0.0.1:1337 succeeded!" << std::endl;
+    } else {
+        enet_peer_reset(peer);
+        std::cout << "Connection to 127.0.0.1:1337 failed!" << std::endl;
+        return;
+    }
+    NetworkCheckServer(1000);
+}
+
+void SendPacket(ENetPeer* peer, std::string data)
+{
+    ENetPacket* packet = enet_packet_create(data.data(), data.length(), ENET_PACKET_FLAG_RELIABLE);
+    if (enet_peer_send(peer, 0, packet) == 0) {
+        std::cout << "Message sent succesfully" << std::endl;
+    };
+}
+
 void NetworkSendMessage(std::string message)
 {
+    if (peer != nullptr) {
+        std::cout << "Sending msg" << message << std::endl;
+        SendPacket(peer, message);
+    }
 }

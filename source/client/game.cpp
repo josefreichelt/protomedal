@@ -1,5 +1,6 @@
 // STD
 #include <iostream>
+#include <sstream>
 #include <string>
 // External
 #include <raylib.h>
@@ -11,6 +12,7 @@
 #include "player.hpp"
 #include "window.hpp"
 #include "network.hpp"
+#include "chat.hpp"
 
 struct GameState {
     Vector2 playerPosition;
@@ -32,10 +34,19 @@ void GameHandleInput(GameState& state)
         }
     }
 }
+static bool writingText { false };
+static bool writingUserName { false };
+const float NETWORK_PING_TIME = 150; // ms
+static float pingTime = 0.0f;
+static GameWindow window;
 void GameHandleUpdate(GameState& state)
 {
     float delta = GetFrameTime();
-    if (cursorLocked) {
+    std::ostringstream title;
+    title << window.windowTitle << " - " << delta;
+    SetWindowTitle(title.str().c_str());
+    pingTime += delta * 1000;
+    if (!writingText) {
         /* UpdateCamera(&state->player.camera, CAMERA_FIRST_PERSON); */
         PlayerUpdate(state.player, delta);
     }
@@ -61,17 +72,26 @@ void GameClose()
 void GameDrawGUI(GameState& state)
 {
     static bool showWindow = true;
+    static std::string username(64, '\0');
     if (showWindow) {
         if (GuiButton(Rectangle { 0, 0, 100, 30 }, "Connect")) {
-            //         NetworkConnect();
+            NetworkConnect();
             std::cout << "Button click" << std::endl;
         }
+        PlayerDebugGUI(state.player);
+
+        if (GuiTextBox({ 10, 40, 100, 20 }, username.data(), 64, writingUserName)) {
+            writingUserName = !writingUserName;
+        }
+        ChatRender(&writingText, [](std::string msg) -> void {
+            std::cout << "Msg: " << "[" << "]: " << msg << std::endl;
+            NetworkSendMessage(msg);
+        });
         // if (nk_begin(ctx, "Debug", nk_rect(0, 0, 200, GetScreenHeight()), NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_CLOSABLE)) {
         //     nk_layout_row_dynamic(ctx, 32, 1);
         //     if (nk_button_label(ctx, "Tlacitko")) {
         //         printf("Button was clicked%s\n",editstringa);
         //     }
-        //     PlayerDebugGUI(&state->player, ctx);
         //     if(nk_button_label(ctx,"Connect")){
         //     }
         //     nk_layout_row_static(ctx,30,100,2);
@@ -91,22 +111,28 @@ void GameMainLoop(GameState& state)
     while (!WindowShouldClose()) {
         GameHandleInput(state);
         GameHandleUpdate(state);
+        if (pingTime > NETWORK_PING_TIME) {
+            pingTime = 0;
+
+            NetworkCheckServer();
+        }
         // Render
-        GameDrawGUI(state);
         BeginDrawing();
         ClearBackground(RAYWHITE);
         GameHandleDraw(state);
+        GameDrawGUI(state);
         EndDrawing();
     }
 }
 void GameStart(void)
 {
     NetworkInit();
-    GameWindow window = GameWindowInit();
+    window = GameWindowInit();
     GameState gameState;
     gameState.playerPosition.x = 50;
     gameState.playerPosition.y = 50;
     PlayerInit(gameState.player);
+    ChatInit();
     GameMainLoop(gameState);
     GameClose();
 }
